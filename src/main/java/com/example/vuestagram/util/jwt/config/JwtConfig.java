@@ -16,6 +16,6 @@ public class JwtConfig {
     private final int refreshTokenCookieExpiry; // 리프레시 토큰 쿠키 유효시간
     private final String secret; // 암호화 할때 사용하는 번호
     private final String headerKey;
-    private final String schema;
+    private final String scheme;
     private final String reissUri;
 }
