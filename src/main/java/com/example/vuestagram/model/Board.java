@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.apache.logging.log4j.util.Lazy;
+import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedDate;
@@ -20,34 +22,27 @@ import java.time.LocalDateTime;
 @Entity
 @EnableJpaAuditing // 업데이트 딜리트 기능
 @EntityListeners(AuditingEntityListener.class) // 뷰의 watch 기능 감시
-@Table(name = "users")
-@SQLDelete(sql = "UPDATE users SET updated_at = NOW(), deleted_at = NOW() WHERE user_id = ?")
+@Table(name = "boards")
+@SQLDelete(sql = "UPDATE boards SET updated_at = NOW(), deleted_at = NOW() WHERE board_id = ?")
 @Where(clause = "deleted_at is NULL")
-public class User {
+public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private Long userId;
+    @Column(name = "board_id")
+    private Long boardId;
 
-    @Column(name = "account",unique = true ,nullable = false, length = 20)
-    private String account;
+    @ManyToOne // EAGER (OTO MTO = 1 대 1 , 다수 대 1 ), Lazy (OTM , MTM = 1대 다수 , 다수 대 다수) 기본 Default EAGER
+    @JoinColumn(name = "user_id")
+    private User user; // 연결할 객체를 지정
 
-    @JsonIgnore  // 노출되면 위험하는거 제외할떄 사용
-    @Column(name = "password" ,nullable = false , length = 255)
-    private String password;
+    @Column(name = "content",nullable = false, length = 200)
+    private String content;
 
-    @Column(name = "name" ,nullable = false , length = 20)
-    private String name;
+    @Column(name = "img",nullable = false, length = 100)
+    private String img;
 
-    @Column(name = "profile", length = 100)
-    private String profile;
-
-    @Column(name = "gender", nullable = false, length =1)
-    private String gender;
-
-    @JsonIgnore // 노출되면 위험하는거 제외할떄 사용
-    @Column(name = "refresh_token" ,length= 512)
-    private String refreshToken;
+    @Column(name = "likes",nullable = false, length = 11)
+    private int likes;
 
     @CreatedDate
     @Column(name = "created_at")
